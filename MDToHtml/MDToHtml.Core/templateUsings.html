@@ -2,8 +2,8 @@
 	$.fn.extend({
 		treed: function (o) {
 
-			var openedClass = 'fa-address-book';
-			var closedClass = 'fa-address-book';
+			var openedClass = 'fa-angle-down';
+			var closedClass = 'fa-angle-right';
 
 			if (typeof o != 'undefined') {
 				if (typeof o.openedClass != 'undefined') {
@@ -56,7 +56,7 @@
 	//Initialization of treeviews
 
 	$(function () {
-		$('#tree3').treed({ openedClass: 'fa-address-book', closedClass: 'fa-address-book' });
+		$('.sidenav ul').treed({ openedClass: 'fa-angle-down', closedClass: 'fa-angle-right' });
 	});
 </script>
 
@@ -65,7 +65,7 @@
 	.tree, .tree ul {
 		margin: 0;
 		padding: 0;
-		list-style: none
+		list-style: none;
 	}
 
 		.tree ul {
@@ -94,7 +94,8 @@
 			line-height: 2em;
 			color: #369;
 			font-weight: 700;
-			position: relative
+			position: relative;
+			cursor: pointer;
 		}
 
 		.tree ul li:before {
@@ -106,11 +107,11 @@
 			margin-top: -1px;
 			position: absolute;
 			top: 1em;
-			left: 0
+			left: 0;
 		}
 
 		.tree ul li:last-child:before {
-			background: #fff;
+			border-bottom: solid 1px;
 			height: auto;
 			top: 1em;
 			bottom: 0
@@ -133,5 +134,34 @@
 		margin: 0px 0px 0px 0px;
 		padding: 0px 0px 0px 0px;
 		outline: 0;
+	}
+
+	.sidenav {
+		height: 100%; /* Full-height: remove this if you want "auto" height */
+		width: 400px; /* Set the width of the sidebar */
+		position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+		z-index: 1; /* Stay on top */
+		top: 0; /* Stay at the top */
+		left: 0;
+		background-color: #111; /* Black */
+		overflow-x: hidden; /* Disable horizontal scroll */
+		padding-top: 20px;
+	}
+
+	/* Style page content */
+	.container {
+		margin-left: 400px; /* Same as the width of the sidebar */
+		padding: 0px 10px;
+	}
+
+	/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+	@media screen and (max-height: 450px) {
+		.sidenav {
+			padding-top: 15px;
+		}
+
+			.sidenav a {
+				font-size: 18px;
+			}
 	}
 </style>

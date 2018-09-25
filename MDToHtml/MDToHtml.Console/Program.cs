@@ -1,12 +1,13 @@
-﻿using MDToHtml.Core;
+﻿using TomLabs.MDToHtml.Core;
 
-namespace MDToHtml.Console
+namespace TomLabs.MDToHtml.Console
 {
 	internal class Program
 	{
 		private static void Main(string[] args)
 		{
-			HtmlGenerator.Generate();
+			var hg = new HtmlGenerator();
+			hg.Generate(@"C:\Data\WORK\FairCredit.wiki");
 		}
 	}
 }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDToHtml.Console", "MDToHtml.Console\MDToHtml.Console.csproj", "{BC92EB44-5366-4211-AC45-86B298414F8E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomLabs.MDToHtml.Console", "MDToHtml.Console\TomLabs.MDToHtml.Console.csproj", "{BC92EB44-5366-4211-AC45-86B298414F8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MDToHtml.Core", "MDToHtml.Core\MDToHtml.Core.csproj", "{BC4669BB-9DFF-4471-A118-3114111C1FA3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TomLabs.MDToHtml.Core", "MDToHtml.Core\TomLabs.MDToHtml.Core.csproj", "{BC4669BB-9DFF-4471-A118-3114111C1FA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
