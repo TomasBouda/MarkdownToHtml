@@ -1,52 +1,39 @@
-﻿using Markdig;
-using Markdig.SyntaxHighlighting;
-using System.IO;
+﻿using System.IO;
 using System.Text;
-using TomLabs.MDToHtml.Core.Utils;
-using TomLabs.MDToHtml.Storage;
-using TomLabs.Shadowgem.Extensions.String;
+using TomLabs.MDToHtml.Files;
 
 namespace TomLabs.MDToHtml.Core
 {
 	public class HtmlGenerator
 	{
-		private MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
-				.UseAdvancedExtensions()
-				.UseEmojiAndSmiley()
-				.UseSoftlineBreakAsHardlineBreak()
-				.UseBootstrap()
-				.UsePipeTables()
-				.UseGridTables()
-				.UseSyntaxHighlighting()
-				.Build();
-
 		private FileTree Root { get; set; }
-		private string NavigationHtml { get; set; }
 
-		public void Generate(string filePath)
+		public void Generate(string mdDirectoryPath, string newDirectoryPath = null)
 		{
-			Root = FileTree.GetTree(filePath, "*.md");
-			NavigationHtml = GenerateNavigation(Root).ToString();
-			Crawl(Root);
+			Root = FileTree.GetTree(mdDirectoryPath, "*.md", new string[] { ".git", ".attachments" });
+			HtmlPage.NavigationHtml = GenerateNavigation(Root, newDirectoryPath ?? $"{Root.Path}_html").ToString();
+			Crawl(Root, newDirectoryPath ?? $"{Root.Path}_html");
 		}
 
-		public void Crawl(FileTree fileTree)
+		public void Crawl(FileTree fileTree, string newDirectoryPath)
 		{
+			Directory.CreateDirectory(fileTree.Path.Replace(Root.Path, newDirectoryPath));
+
 			if (fileTree.SubDirectories.Count > 0)  // Dive in
 			{
 				foreach (var subDir in fileTree.SubDirectories)
 				{
-					Crawl(subDir);
+					Crawl(subDir, newDirectoryPath);
 				}
 			}
 
 			foreach (var file in fileTree.Files)
 			{
-				TransferFile(file.FullName);
+				TransferFile(file.FullName, file.FullName.Replace(Root.Path, newDirectoryPath));
 			}
 		}
 
-		private StringBuilder GenerateNavigation(FileTree fileTree, StringBuilder sb = null)
+		private StringBuilder GenerateNavigation(FileTree fileTree, string newDirectoryPath, StringBuilder sb = null)
 		{
 			(sb ?? (sb = new StringBuilder())).Append("<ul>");
 
@@ -55,14 +42,14 @@ namespace TomLabs.MDToHtml.Core
 				foreach (var subDir in fileTree.SubDirectories)
 				{
 					sb.Append($"<li>{subDir.Info.Name}");
-					GenerateNavigation(subDir, sb);
+					GenerateNavigation(subDir, newDirectoryPath, sb);
 					sb.Append("</li>");
 				}
 			}
 
 			foreach (var file in fileTree.Files)
 			{
-				sb.Append($"<li><a href='{file.FullName.Replace(".md", ".html")}'>{file.Name}</a></li>");
+				sb.Append($"<li><a href='{file.FullName.Replace(Root.Path, "").Replace("\\", "/").Replace(".md", ".html")}'>{file.Name}</a></li>");
 			}
 
 			sb.Append("</ul>");
@@ -73,12 +60,9 @@ namespace TomLabs.MDToHtml.Core
 		public void TransferFile(string filePath, string targetFilePath = null)
 		{
 			var md = File.ReadAllText(filePath, Encoding.UTF8);
-			var result = Markdown.ToHtml(md, _pipeline);
+			var page = new HtmlPage(md, Path.GetFileNameWithoutExtension(filePath));
 
-			var usings = Embeded.GetEmbededFile("templateUsings.html");
-			var html = Embeded.GetEmbededFile("pageTemplate.html").FillIn(result, usings, NavigationHtml);
-
-			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", html, Encoding.UTF8);
+			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", page.Html, Encoding.UTF8);
 		}
 	}
 }

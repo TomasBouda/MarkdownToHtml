@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BC92EB44-5366-4211-AC45-86B298414F8E}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MDToHtml.Console</RootNamespace>
-    <AssemblyName>MDToHtml.Console</AssemblyName>
+    <RootNamespace>TomLabs.MDToHtml.Console</RootNamespace>
+    <AssemblyName>TomLabs.MDToHtml.Console</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

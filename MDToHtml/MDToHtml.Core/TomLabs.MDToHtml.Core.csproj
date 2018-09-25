@@ -7,8 +7,8 @@
     <ProjectGuid>{BC4669BB-9DFF-4471-A118-3114111C1FA3}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MDToHtml.Core</RootNamespace>
-    <AssemblyName>MDToHtml.Core</AssemblyName>
+    <RootNamespace>TomLabs.MDToHtml.Core</RootNamespace>
+    <AssemblyName>TomLabs.MDToHtml.Core</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -58,6 +58,7 @@
   <ItemGroup>
     <Compile Include="Files\FileTree.cs" />
     <Compile Include="HtmlGenerator.cs" />
+    <Compile Include="HtmlPage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Embeded.cs" />
   </ItemGroup>
@@ -65,13 +66,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="pageTemplate.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="templateUsings.html" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="navTemplate.html" />
+    <EmbeddedResource Include="pageTemplate.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

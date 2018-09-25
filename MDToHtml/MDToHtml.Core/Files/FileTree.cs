@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace TomLabs.MDToHtml.Storage
+namespace TomLabs.MDToHtml.Files
 {
 	public class FileTree
 	{
@@ -14,13 +14,14 @@ namespace TomLabs.MDToHtml.Storage
 
 		public List<FileInfo> Files { get; private set; }
 
-		public FileTree(string path, string fileSearchPattern)
+		public FileTree(string path, string fileSearchPattern, string[] excludedDirectoryNames = null)
 		{
 			if (Directory.Exists(path))
 			{
 				Path = path;
 				Info = new DirectoryInfo(Path);
 				SubDirectories = Directory.GetDirectories(Path, "*")
+					.Where(x => !excludedDirectoryNames?.Contains(System.IO.Path.GetFileName(x)) ?? true)
 					.Select(s => new FileTree(s, fileSearchPattern))
 					.ToList();
 				Files = Directory.GetFiles(Path, fileSearchPattern)
@@ -29,9 +30,9 @@ namespace TomLabs.MDToHtml.Storage
 			}
 		}
 
-		public static FileTree GetTree(string path, string fileSearchPattern = "*.*")
+		public static FileTree GetTree(string path, string fileSearchPattern = "*.*", string[] excludedDirectoryNames = null)
 		{
-			return new FileTree(path, fileSearchPattern);
+			return new FileTree(path, fileSearchPattern, excludedDirectoryNames);
 		}
 	}
 }
