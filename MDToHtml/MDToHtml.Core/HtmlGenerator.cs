@@ -6,18 +6,32 @@ namespace TomLabs.MDToHtml.Core
 {
 	public class HtmlGenerator
 	{
-		private FileTree Root { get; set; }
+		private FileTree SourceTree { get; set; }
 
 		public void Generate(string mdDirectoryPath, string newDirectoryPath = null)
 		{
-			Root = FileTree.GetTree(mdDirectoryPath, "*.md", new string[] { ".git", ".attachments" });
-			HtmlPage.NavigationHtml = GenerateNavigation(Root, newDirectoryPath ?? $"{Root.Path}_html").ToString();
-			Crawl(Root, newDirectoryPath ?? $"{Root.Path}_html");
+			SourceTree = FileTree.GetTree(mdDirectoryPath, "*.md", new string[] { ".git", ".attachments" });
+			string newDir = newDirectoryPath ?? $"{SourceTree.Path}_html";
+
+			HtmlPage.NavigationHtml = GenerateNavigation(SourceTree, newDir).ToString();
+
+			Crawl(SourceTree, newDir);
+
+			string homeHtml = File.Exists($"{newDir}\\Home.html") ? File.ReadAllText($"{newDir}\\Home.html") : "";
+			File.WriteAllText($"{newDir}\\index.html", new HtmlPage(homeHtml, "Wiki").Html);
 		}
 
-		public void Crawl(FileTree fileTree, string newDirectoryPath)
+		public void TransformFile(string filePath, string targetFilePath = null)
 		{
-			Directory.CreateDirectory(fileTree.Path.Replace(Root.Path, newDirectoryPath));
+			var md = File.ReadAllText(filePath, Encoding.UTF8);
+			var page = new HtmlPage(md, Path.GetFileNameWithoutExtension(filePath));
+
+			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", page.InnerHtml, Encoding.UTF8);
+		}
+
+		private void Crawl(FileTree fileTree, string newDirectoryPath)
+		{
+			Directory.CreateDirectory(fileTree.Path.Replace(SourceTree.Path, newDirectoryPath));
 
 			if (fileTree.SubDirectories.Count > 0)  // Dive in
 			{
@@ -29,7 +43,7 @@ namespace TomLabs.MDToHtml.Core
 
 			foreach (var file in fileTree.Files)
 			{
-				TransferFile(file.FullName, file.FullName.Replace(Root.Path, newDirectoryPath));
+				TransformFile(file.FullName, file.FullName.Replace(SourceTree.Path, newDirectoryPath));
 			}
 		}
 
@@ -41,7 +55,7 @@ namespace TomLabs.MDToHtml.Core
 			{
 				foreach (var subDir in fileTree.SubDirectories)
 				{
-					sb.Append($"<li>{subDir.Info.Name}");
+					sb.Append($"<li>{subDir.Info.Name.Replace("-", " ")}");
 					GenerateNavigation(subDir, newDirectoryPath, sb);
 					sb.Append("</li>");
 				}
@@ -49,20 +63,13 @@ namespace TomLabs.MDToHtml.Core
 
 			foreach (var file in fileTree.Files)
 			{
-				sb.Append($"<li><a href='{file.FullName.Replace(Root.Path, "").Replace("\\", "/").Replace(".md", ".html")}'>{file.Name}</a></li>");
+				string fileRelPath = file.FullName.Replace(SourceTree.Path, "").Replace("\\", "/").Replace(".md", ".html");
+				sb.Append($"<li><aa class='link' data-file-path='{fileRelPath}'>{Path.GetFileNameWithoutExtension(file.Name).Replace("-", " ")}</aa></li>");
 			}
 
 			sb.Append("</ul>");
 
 			return sb;
-		}
-
-		public void TransferFile(string filePath, string targetFilePath = null)
-		{
-			var md = File.ReadAllText(filePath, Encoding.UTF8);
-			var page = new HtmlPage(md, Path.GetFileNameWithoutExtension(filePath));
-
-			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", page.Html, Encoding.UTF8);
 		}
 	}
 }

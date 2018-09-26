@@ -3,6 +3,7 @@ using Markdig;
 using Markdig.SyntaxHighlighting;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using TomLabs.Shadowgem.Extensions.String;
 
 namespace TomLabs.MDToHtml.Core
@@ -52,6 +53,9 @@ namespace TomLabs.MDToHtml.Core
 		{
 			MarkdownString = markdownString;
 			InnerHtml = Markdown.ToHtml(MarkdownString, _pipeline);
+			InnerHtml = Regex.Replace(InnerHtml, "<a href=\"(.*)(\\.md)\">", "<a class='link' data-file-path='$1.html' href='#'>");
+			InnerHtml = Regex.Replace(InnerHtml, "\"\\.attachments", "\"/.attachments");
+
 			PageTitle = pageTitle;
 		}
 

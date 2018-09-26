@@ -12,6 +12,25 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 	<style>
+		code {
+			font-family: Menlo,Consolas,Courier New,monospace;
+			font-size: 12px;
+			color: black;
+			background-color: rgba(234,234,234,1);
+			background-color: rgba(var(--palette-neutral-8,234, 234, 234),1);
+			padding: 2px 4px;
+		}
+
+		button .link {
+			margin: 0;
+			padding: 0 1em;
+			line-height: 2em;
+			color: lightgray;
+			font-weight: 700;
+			position: relative;
+			cursor: pointer;
+		}
+
 		.tree, .tree ul {
 			margin: 0;
 			padding: 0;
@@ -189,16 +208,47 @@
 			//Initialization of treeview
 			$('.sidenav ul').treed({ openedClass: 'fa-angle-down', closedClass: 'fa-angle-right' });
 
-			// Fix relative paths to actual absolute path
-			$("li a").each(function () {
-				if (decodeURI(window.location.pathname).includes($(this).attr("href"))) {
-					var root = decodeURI(window.location.pathname).replace($(this).attr("href"), "")
-					$("li a").each(function () {
-						$(this).attr("href", root + $(this).attr("href"));
-					});
-					return;
-				}
+			$(".link").each(function () {
+				$(this).click(function () {
+					var file = $(this).attr("data-file-path");
+					$("#page-container").load(file);
+
+					if (file != location.href) {
+						history.pushState({ page: file }, null, file);
+					}
+				});
 			});
+
+			$("#page-container").on("click", ".link", function () {
+				var file = $(this).attr("data-file-path");
+				$("#page-container").load(file);
+
+				if (file != location.href) {
+					history.pushState({ page: file }, null, file);
+				}
+
+			});
+
+			window.onpopstate = function (event) {
+				if (location.pathname == "/") {
+					$("#page-container").load("/Home.html");
+				}
+				else {
+					$("#page-container").load(location.pathname);
+				}
+			};
+
+			window.onbeforeunload = function (e) {
+				var message = "Leave wiki?",
+					e = e || window.event;
+				// For IE and Firefox
+				if (e) {
+					e.returnValue = message;
+				}
+
+				// For Safari
+				return message;
+			};
 		});
 	</script>
 </body>
