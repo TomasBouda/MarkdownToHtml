@@ -11,9 +11,154 @@
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+	<script type="text/javascript">
+		$.fn.extend({
+			treed: function (o) {
+
+				var openedClass = 'fa-angle-down';
+				var closedClass = 'fa-angle-right';
+
+				if (typeof o != 'undefined') {
+					if (typeof o.openedClass != 'undefined') {
+						openedClass = o.openedClass;
+					}
+					if (typeof o.closedClass != 'undefined') {
+						closedClass = o.closedClass;
+					}
+				};
+
+				//initialize each of the top levels
+				var tree = $(this);
+				tree.addClass("tree");
+				tree.find('li').has("ul").each(function () {
+					var branch = $(this); //li with children ul
+					branch.prepend("<i class='indicator fa " + closedClass + "' aria-hidden='true'></i>");
+					branch.addClass('branch');
+					branch.on('click', function (e) {
+						if (this == e.target) {
+							var icon = $(this).children('i:first');
+							icon.toggleClass(openedClass + " " + closedClass);
+							$(this).children().children().toggle();
+						}
+					})
+					branch.children().children().toggle();
+				});
+				//fire event from the dynamically added icon
+				tree.find('.branch .indicator').each(function () {
+					$(this).on('click', function () {
+						$(this).closest('li').click();
+					});
+				});
+				//fire event to open branch if the li contains an anchor instead of text
+				tree.find('.branch>a').each(function () {
+					$(this).on('click', function (e) {
+						$(this).closest('li').click();
+						e.preventDefault();
+					});
+				});
+				//fire event to open branch if the li contains a button instead of text
+				tree.find('.branch>button').each(function () {
+					$(this).on('click', function (e) {
+						$(this).closest('li').click();
+						e.preventDefault();
+					});
+				});
+			}
+		});
+
+		function getPageFromQueryParam() {
+			let urlParams = new URLSearchParams(window.location.search);
+			let page = urlParams.get('page');
+
+			return page;
+		}
+
+		function loadPageByQueryParam() {
+			console.log(getPageFromQueryParam());
+			$("#page-container").load(getPageFromQueryParam());
+		}
+
+		function showCurrentPageInTree(unfoldTree) {
+			var currentPage = getPageFromQueryParam();
+
+			$(".link").each(function () {
+				var file = $(this).attr("data-file-path");
+
+				if (decodeURI(file) == currentPage) {
+					$(this).css("text-decoration", "underline");
+
+					if (unfoldTree) {
+						$(this).parents("li.branch").each(function () {
+							$(this).children("i.indicator").click();
+							console.log($(this));
+						});
+					}
+				}
+				else {
+					$(this).css("text-decoration", "initial");
+				}
+			});
+		}
+	</script>
+
 	<style>
+		* {
+			font-family: "Segoe UI VSS (Regular)","Segoe UI","-apple-system",BlinkMacSystemFont,Roboto,"Helvetica Neue",Helvetica,Ubuntu,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+			font-size: 14px;
+			line-height: 1.2;
+		}
+
+		h1 {
+			font-size: 28px;
+			font-weight: 300;
+			margin: 14px 0;
+		}
+
+		h2 {
+			font-size: 21px;
+			font-weight: normal;
+			margin: 14px 0;
+			margin-top: 28px;
+		}
+
+		h3 {
+			font-size: 17px;
+			font-weight: 600;
+			margin: 14px 0;
+			margin-top: 28px;
+		}
+
+		h4 {
+			font-size: 15px;
+			font-weight: 600;
+			margin: 14px 0;
+			margin-top: 28px;
+		}
+
+		h5 {
+			font-size: 14px;
+			font-weight: 600;
+			margin: 14px 0;
+		}
+
+		h6 {
+			font-size: 12px;
+			font-weight: 600;
+			margin: 14px 0;
+		}
+
+		tr:nth-child(even) {
+			background: rgba(var(--palette-neutral-2,248, 248, 248),1);
+		}
+
+		pre {
+			padding: 15px;
+			border-radius: 5px;
+			background-color: rgba(var(--palette-neutral-8,234, 234, 234),1);
+		}
+
 		code {
-			font-family: Menlo,Consolas,Courier New,monospace;
+			font-family: Consolas;
 			font-size: 12px;
 			color: black;
 			background-color: rgba(234,234,234,1);
@@ -128,10 +273,6 @@
 			.sidenav {
 				padding-top: 15px;
 			}
-
-				.sidenav a {
-					font-size: 18px;
-				}
 		}
 	</style>
 </head>
@@ -149,73 +290,23 @@
 		</div>
 	</div>
 
-	<script>
-		$.fn.extend({
-			treed: function (o) {
-
-				var openedClass = 'fa-angle-down';
-				var closedClass = 'fa-angle-right';
-
-				if (typeof o != 'undefined') {
-					if (typeof o.openedClass != 'undefined') {
-						openedClass = o.openedClass;
-					}
-					if (typeof o.closedClass != 'undefined') {
-						closedClass = o.closedClass;
-					}
-				};
-
-				//initialize each of the top levels
-				var tree = $(this);
-				tree.addClass("tree");
-				tree.find('li').has("ul").each(function () {
-					var branch = $(this); //li with children ul
-					branch.prepend("<i class='indicator fa " + closedClass + "' aria-hidden='true'></i>");
-					branch.addClass('branch');
-					branch.on('click', function (e) {
-						if (this == e.target) {
-							var icon = $(this).children('i:first');
-							icon.toggleClass(openedClass + " " + closedClass);
-							$(this).children().children().toggle();
-						}
-					})
-					branch.children().children().toggle();
-				});
-				//fire event from the dynamically added icon
-				tree.find('.branch .indicator').each(function () {
-					$(this).on('click', function () {
-						$(this).closest('li').click();
-					});
-				});
-				//fire event to open branch if the li contains an anchor instead of text
-				tree.find('.branch>a').each(function () {
-					$(this).on('click', function (e) {
-						$(this).closest('li').click();
-						e.preventDefault();
-					});
-				});
-				//fire event to open branch if the li contains a button instead of text
-				tree.find('.branch>button').each(function () {
-					$(this).on('click', function (e) {
-						$(this).closest('li').click();
-						e.preventDefault();
-					});
-				});
-			}
-		});
+	<script type="text/javascript">
 
 		$(function () {
 			//Initialization of treeview
 			$('.sidenav ul').treed({ openedClass: 'fa-angle-down', closedClass: 'fa-angle-right' });
 
 			$(".link").each(function () {
+				var file = $(this).attr("data-file-path");
+
 				$(this).click(function () {
-					var file = $(this).attr("data-file-path");
 					$("#page-container").load(file);
 
 					if (file != location.href) {
-						history.pushState({ page: file }, null, file);
+						history.pushState({ page: file }, null, '?page=' + file);
 					}
+
+					showCurrentPageInTree(false);
 				});
 			});
 
@@ -224,31 +315,29 @@
 				$("#page-container").load(file);
 
 				if (file != location.href) {
-					history.pushState({ page: file }, null, file);
+					history.pushState({ page: file }, null, '?page=' + file);
 				}
 
 			});
 
 			window.onpopstate = function (event) {
-				if (location.pathname == "/") {
-					$("#page-container").load("/Home.html");
-				}
-				else {
-					$("#page-container").load(location.pathname);
-				}
+				loadPageByQueryParam();
 			};
 
-			window.onbeforeunload = function (e) {
-				var message = "Leave wiki?",
-					e = e || window.event;
-				// For IE and Firefox
-				if (e) {
-					e.returnValue = message;
-				}
+			//window.onbeforeunload = function (e) {
+			//	var message = "Leave wiki?",
+			//		e = e || window.event;
+			//	// For IE and Firefox
+			//	if (e) {
+			//		e.returnValue = message;
+			//	}
 
-				// For Safari
-				return message;
-			};
+			//	// For Safari
+			//	return message;
+			//};
+
+			loadPageByQueryParam();
+			showCurrentPageInTree(true);
 		});
 	</script>
 </body>

@@ -53,6 +53,12 @@ namespace TomLabs.MDToHtml.Core
 		{
 			MarkdownString = markdownString;
 			InnerHtml = Markdown.ToHtml(MarkdownString, _pipeline);
+
+			if (!InnerHtml.StartsWith("<h"))
+			{
+				InnerHtml = $"<h1>{pageTitle}</h1>{Environment.NewLine}{Environment.NewLine}" + InnerHtml;
+			}
+
 			InnerHtml = Regex.Replace(InnerHtml, "<a href=\"(.*)(\\.md)\">", "<a class='link' data-file-path='$1.html' href='#'>");
 			InnerHtml = Regex.Replace(InnerHtml, "\"\\.attachments", "\"/.attachments");
 
