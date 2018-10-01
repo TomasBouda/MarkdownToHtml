@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace TomLabs.MDToHtml.Files
 {
@@ -14,7 +15,7 @@ namespace TomLabs.MDToHtml.Files
 
 		public List<FileInfo> Files { get; private set; }
 
-		public FileTree(string path, string fileSearchPattern, string[] excludedDirectoryNames = null)
+		public FileTree(string path, string fileRegexSearchPattern, string[] excludedDirectoryNames = null)
 		{
 			if (Directory.Exists(path))
 			{
@@ -22,17 +23,18 @@ namespace TomLabs.MDToHtml.Files
 				Info = new DirectoryInfo(Path);
 				SubDirectories = Directory.GetDirectories(Path, "*")
 					.Where(x => !excludedDirectoryNames?.Contains(System.IO.Path.GetFileName(x)) ?? true)
-					.Select(s => new FileTree(s, fileSearchPattern))
+					.Select(s => new FileTree(s, fileRegexSearchPattern))
 					.ToList();
-				Files = Directory.GetFiles(Path, fileSearchPattern)
+				Files = Directory.GetFiles(Path, "*.*")
+					.Where(f => Regex.IsMatch(f, fileRegexSearchPattern))
 					.Select(s => new FileInfo(s))
 					.ToList();
 			}
 		}
 
-		public static FileTree GetTree(string path, string fileSearchPattern = "*.*", string[] excludedDirectoryNames = null)
+		public static FileTree GetTree(string path, string fileRegexSearchPattern = ".*\\..*", string[] excludedDirectoryNames = null)
 		{
-			return new FileTree(path, fileSearchPattern, excludedDirectoryNames);
+			return new FileTree(path, fileRegexSearchPattern, excludedDirectoryNames);
 		}
 	}
 }

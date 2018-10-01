@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Text;
 using TomLabs.MDToHtml.Files;
 
@@ -10,7 +11,7 @@ namespace TomLabs.MDToHtml.Core
 
 		public void Generate(string mdDirectoryPath, string newDirectoryPath = null)
 		{
-			SourceTree = FileTree.GetTree(mdDirectoryPath, "*.md", new string[] { ".git", ".attachments" });
+			SourceTree = FileTree.GetTree(mdDirectoryPath, ".*\\.md|\\.order", new string[] { ".git", ".attachments" });
 			string newDir = newDirectoryPath ?? $"{SourceTree.Path}_html";
 
 			HtmlPage.NavigationHtml = GenerateNavigation(SourceTree, newDir).ToString();
@@ -61,7 +62,16 @@ namespace TomLabs.MDToHtml.Core
 				}
 			}
 
-			foreach (var file in fileTree.Files)
+			var order = fileTree.Files.FirstOrDefault(f => f.Name == ".order");
+			var orderedFilesList = fileTree.Files;
+			if (order != null)
+			{
+				orderedFilesList.Remove(order);
+				var orderList = File.ReadAllLines(order.FullName).ToList();
+				orderedFilesList = orderedFilesList.OrderBy(f => orderList.IndexOf(f.Name.Replace(".md", ""))).ToList();
+			}
+
+			foreach (var file in orderedFilesList)
 			{
 				string fileRelPath = file.FullName.Replace(SourceTree.Path, "").Replace("\\", "/").Replace(".md", ".html");
 				sb.Append($"<li><aa class='link' data-file-path='{fileRelPath}'>{Path.GetFileNameWithoutExtension(file.Name).Replace("-", " ")}</aa></li>");

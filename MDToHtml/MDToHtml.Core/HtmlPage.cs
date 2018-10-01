@@ -54,7 +54,7 @@ namespace TomLabs.MDToHtml.Core
 			MarkdownString = markdownString;
 			InnerHtml = Markdown.ToHtml(MarkdownString, _pipeline);
 
-			if (!InnerHtml.StartsWith("<h"))
+			if (!InnerHtml.StartsWith("<h1>"))
 			{
 				InnerHtml = $"<h1>{pageTitle}</h1>{Environment.NewLine}{Environment.NewLine}" + InnerHtml;
 			}
