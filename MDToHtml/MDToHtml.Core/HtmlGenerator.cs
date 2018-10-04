@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 using System.Text;
 using TomLabs.MDToHtml.Files;
@@ -14,14 +15,19 @@ namespace TomLabs.MDToHtml.Core
 			SourceTree = FileTree.GetTree(mdDirectoryPath, ".*\\.md|\\.order", new string[] { ".git", ".attachments" });
 			string newDir = newDirectoryPath ?? $"{SourceTree.Path}_html";
 
+			Console.WriteLine($"Generating html wiki from {mdDirectoryPath} into {newDir}");
+
 			Crawl(SourceTree, newDir);
 
+			Console.WriteLine($"Generating navigation and index page");
 			string homeHtml = File.Exists($"{newDir}\\Home.html") ? File.ReadAllText($"{newDir}\\Home.html") : "";
 			File.WriteAllText($"{newDir}\\index.html", new Index(GenerateNavigation(SourceTree, newDir).ToString(), "Wiki", homeHtml).Html);
 		}
 
 		public void TransformFile(string filePath, string targetFilePath = null)
 		{
+			Console.WriteLine($"Processing file {filePath}");
+
 			var md = File.ReadAllText(filePath, Encoding.UTF8);
 			md = md.Replace("[[_TOC_]]", ""); // TODO
 
