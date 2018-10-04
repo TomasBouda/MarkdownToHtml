@@ -14,20 +14,20 @@ namespace TomLabs.MDToHtml.Core
 			SourceTree = FileTree.GetTree(mdDirectoryPath, ".*\\.md|\\.order", new string[] { ".git", ".attachments" });
 			string newDir = newDirectoryPath ?? $"{SourceTree.Path}_html";
 
-			HtmlPage.NavigationHtml = GenerateNavigation(SourceTree, newDir).ToString();
-
 			Crawl(SourceTree, newDir);
 
 			string homeHtml = File.Exists($"{newDir}\\Home.html") ? File.ReadAllText($"{newDir}\\Home.html") : "";
-			File.WriteAllText($"{newDir}\\index.html", new HtmlPage(homeHtml, "Wiki").Html);
+			File.WriteAllText($"{newDir}\\index.html", new Index(GenerateNavigation(SourceTree, newDir).ToString(), "Wiki", homeHtml).Html);
 		}
 
 		public void TransformFile(string filePath, string targetFilePath = null)
 		{
 			var md = File.ReadAllText(filePath, Encoding.UTF8);
-			var page = new HtmlPage(md, Path.GetFileNameWithoutExtension(filePath));
+			md = md.Replace("[[_TOC_]]", ""); // TODO
 
-			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", page.InnerHtml, Encoding.UTF8);
+			var page = new MarkdownPage(md, Path.GetFileNameWithoutExtension(filePath));
+
+			File.WriteAllText($"{Path.GetDirectoryName(targetFilePath ?? filePath)}\\{Path.GetFileNameWithoutExtension(targetFilePath ?? filePath)}.html", page.Html, Encoding.UTF8);
 		}
 
 		private void Crawl(FileTree fileTree, string newDirectoryPath)
@@ -42,7 +42,7 @@ namespace TomLabs.MDToHtml.Core
 				}
 			}
 
-			foreach (var file in fileTree.Files)
+			foreach (var file in fileTree.Files.Where(f => !f.Name.EndsWith(".order")))
 			{
 				TransformFile(file.FullName, file.FullName.Replace(SourceTree.Path, newDirectoryPath));
 			}

@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<title>{{ PageTitle }}</title>
+
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+	{{#CssIncludes}}
+	{{> CssContent}}
+	{{/CssIncludes}}
+
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+
+	<header class="header clearfix">
+		<button type="button" id="toggleMenu" class="toggle_menu">
+			<i class="fa fa-bars"></i>
+		</button>
+		<h1>{{ PageTitle }}</h1>
+	</header>
+
+	<!-- Sidebar -->
+	<nav class="vertical_nav">
+		{{{ Nav }}}
+	</nav>
+
+	<div class="wrapper">
+		<!-- Page Content -->
+		<div id="page-container">
+			{{{ PageContent }}}
+		</div>
+	</div>
+
+	{{#JsIncludes}}
+	{{> JsContent }}
+	{{/JsIncludes}}
+</body>
+</html>

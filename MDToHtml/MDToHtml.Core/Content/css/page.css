@@ -1,0 +1,155 @@
+﻿* {
+	font-family: "Segoe UI VSS (Regular)","Segoe UI","-apple-system",BlinkMacSystemFont,Roboto,"Helvetica Neue",Helvetica,Ubuntu,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+h1 {
+	font-size: 28px;
+	font-weight: 300;
+	margin: 14px 0;
+}
+
+h2 {
+	font-size: 21px;
+	font-weight: normal;
+	margin: 14px 0;
+	margin-top: 28px;
+}
+
+h3 {
+	font-size: 17px;
+	font-weight: 600;
+	margin: 14px 0;
+	margin-top: 28px;
+}
+
+h4 {
+	font-size: 15px;
+	font-weight: 600;
+	margin: 14px 0;
+	margin-top: 28px;
+}
+
+h5 {
+	font-size: 14px;
+	font-weight: 600;
+	margin: 14px 0;
+}
+
+h6 {
+	font-size: 12px;
+	font-weight: 600;
+	margin: 14px 0;
+}
+
+tr:nth-child(even) {
+	background: rgba(var(--palette-neutral-2,248, 248, 248),1);
+}
+
+pre {
+	padding: 15px;
+	border-radius: 5px;
+	background-color: rgba(var(--palette-neutral-8,234, 234, 234),1);
+}
+
+code {
+	font-family: Consolas;
+	font-size: 12px;
+	color: black;
+	background-color: rgba(234,234,234,1);
+	background-color: rgba(var(--palette-neutral-8,234, 234, 234),1);
+	padding: 2px 4px;
+}
+
+button .link {
+	margin: 0;
+	padding: 0 1em;
+	line-height: 2em;
+	color: lightgray;
+	font-weight: 700;
+	position: relative;
+	cursor: pointer;
+}
+
+.tree, .tree ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+	.tree ul {
+		margin-left: 1em;
+		position: relative
+	}
+
+		.tree ul ul {
+			margin-left: .5em
+		}
+
+		.tree ul:before {
+			content: "";
+			display: block;
+			width: 0;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			border-left: 1px solid
+		}
+
+	.tree li {
+		margin: 0;
+		padding: 0 1em;
+		line-height: 2em;
+		font-weight: 700;
+		position: relative;
+		cursor: pointer;
+	}
+
+	.tree ul li:before {
+		content: "";
+		display: block;
+		width: 10px;
+		height: 0;
+		border-top: 1px solid;
+		margin-top: -1px;
+		position: absolute;
+		top: 1em;
+		left: 0;
+	}
+
+	.tree ul li:last-child:before {
+		border-bottom: solid 1px;
+		height: auto;
+		top: 1em;
+		bottom: 0
+	}
+
+.indicator {
+	margin-right: 5px;
+}
+
+.tree li a {
+	text-decoration: none;
+}
+
+.tree li button, .tree li button:active, .tree li button:focus {
+	text-decoration: none;
+	border: none;
+	background: transparent;
+	margin: 0px 0px 0px 0px;
+	padding: 0px 0px 0px 0px;
+	outline: 0;
+}
+
+.sidenav {
+	height: 100%;
+	position: fixed;
+	z-index: 1;
+	top: 0;
+	left: 0;
+	background-color: #111;
+	overflow-x: hidden;
+	padding-top: 20px;
+}
