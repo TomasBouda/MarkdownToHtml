@@ -14,6 +14,9 @@ namespace TomLabs.MDToHtml.Console
 
 			[Option('o', "output", Required = false, HelpText = "Path where html wiki will be created")]
 			public string Output { get; set; } = null;
+
+			[Option('a', "attachements", Required = false, HelpText = "Path to source .attachements directory")]
+			public string AttachementsPath { get; set; } = null;
 		}
 
 		private static void Main(string[] args)
@@ -24,7 +27,7 @@ namespace TomLabs.MDToHtml.Console
 				{
 					if (Directory.Exists(o.Input))
 					{
-						hg.Generate(o.Input, o.Output);
+						hg.Generate(o.Input, o.Output, o.AttachementsPath);
 						WriteLine($"All done");
 					}
 					else

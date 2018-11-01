@@ -10,7 +10,7 @@ namespace TomLabs.MDToHtml.Core
 	{
 		private FileTree SourceTree { get; set; }
 
-		public void Generate(string mdDirectoryPath, string newDirectoryPath = null)
+		public void Generate(string mdDirectoryPath, string newDirectoryPath = null, string attachementsPath = null)
 		{
 			SourceTree = FileTree.GetTree(mdDirectoryPath, ".*\\.md|\\.order", new string[] { ".git", ".attachments" });
 			string newDir = newDirectoryPath ?? $"{SourceTree.Path}_html";
@@ -20,8 +20,31 @@ namespace TomLabs.MDToHtml.Core
 			Crawl(SourceTree, newDir);
 
 			Console.WriteLine($"Generating navigation and index page");
-			string homeHtml = File.Exists($"{newDir}\\Home.html") ? File.ReadAllText($"{newDir}\\Home.html") : "";
+			string homeHtml = File.Exists($"{newDir}\\Home.html") ? File.ReadAllText($"{newDir}\\Home.html") : File.ReadAllText(Directory.GetFiles(newDir).FirstOrDefault(f => !f.StartsWith("index")));
 			File.WriteAllText($"{newDir}\\index.html", new Index(GenerateNavigation(SourceTree, newDir).ToString(), "Wiki", homeHtml).Html);
+
+			var attachmementsSource = attachementsPath ?? $"{mdDirectoryPath}\\.attachments";
+			var attachmementsTarget = $"{newDir}\\.attachments";
+
+			CopyFilesRecursively(new DirectoryInfo(attachmementsSource), new DirectoryInfo(attachmementsTarget));
+		}
+
+		public static void CopyFilesRecursively(DirectoryInfo source, DirectoryInfo target)
+		{
+			if (!Directory.Exists(target.FullName))
+			{
+				Directory.CreateDirectory(target.FullName);
+			}
+
+			foreach (DirectoryInfo dir in source.GetDirectories())
+			{
+				CopyFilesRecursively(dir, target.CreateSubdirectory(dir.Name));
+			}
+
+			foreach (FileInfo file in source.GetFiles())
+			{
+				file.CopyTo(Path.Combine(target.FullName, file.Name), true);
+			}
 		}
 
 		public void TransformFile(string filePath, string targetFilePath = null)
