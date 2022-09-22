@@ -85,7 +85,8 @@ namespace TomLabs.MDToHtml.Core
 			{
 				foreach (var subDir in fileTree.SubDirectories)
 				{
-					sb.Append($"<li>{subDir.Info.Name.Replace("-", " ")}");
+					string fileRelPath = subDir..FullName.Replace(SourceTree.Path, "").Replace("\\", "/").Replace(".md", ".html");
+					sb.Append($"<li><aa class='link' data-file-path='{subDir.Path}.md'>{subDir.Info.Name.Replace("-", " ")}</aa>");
 					GenerateNavigation(subDir, newDirectoryPath, sb);
 					sb.Append("</li>");
 				}
